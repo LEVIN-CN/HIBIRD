@@ -5,6 +5,9 @@ package ent;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import netwk.ZcwDataClient;
 
 /**
@@ -12,25 +15,18 @@ import netwk.ZcwDataClient;
  *
  */
 public class BootStarp {
+	private static final Logger logger = LoggerFactory.getLogger(BootStarp.class);
 
 	/**
 	 * @param args
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
-		ZcwDataClient client = ZcwDataClient.getClient().parse();
-		//System.out.println(client.getLast_30_issue_no());
-		//System.out.println(client.getKJDetailByIssue("2017146"));
-		Set<String> set = client.getLast_30_issue_no();
-		set.forEach((String e) ->{
-			try {
-				System.out.println(client.getKjNumByIssue(e));
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+		ZcwDataClient client = ZcwDataClient.getClient();
+		if (client.parse()) {
+			Set<String> set = client.getLast_30_issue_no();
+			logger.debug("The curent set size:" + set.size());
+		}
 	}
 
 }

@@ -67,39 +67,37 @@ public class ZcwDataClient {
 		return ZcwEnum.INSTANCE.getClient();
 	}
 
-	public ZcwDataClient parse() {
+	public boolean parse() {
+		boolean isParsed = false;
 		String jsData = null;
 		try {
 			jsData = getZCWKJData();
+			if (jsData != null) {
+				String[] needData = jsData.split(System.getProperty("line.separator"));
+				String kjD = needData[2];
+				int index_5 = kjD.indexOf("{");
+				int index_6 = kjD.lastIndexOf("}");
+				kjNum = JSON.parseObject(kjD.substring(index_5, index_6 + 1));
+				String myKj = needData[3];
+				int index_1 = myKj.indexOf("{");
+				int index_2 = myKj.lastIndexOf("}");
+				kjData = JSON.parseObject(myKj.substring(index_1, index_2 + 1));
+				String isNos = needData[4];
+				kjIssData = new TreeSet<String>();
+				int index_3 = isNos.indexOf("\"");
+				int index_4 = isNos.lastIndexOf("\"");
+				String isNos2 = isNos.substring(index_3 + 1, index_4);
+				for (String iss : isNos2.split(",")) {
+					kjIssData.add(iss);
+				}
+				isParsed = true;
+			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (jsData != null) {
-			String[] needData = jsData.split(System.getProperty("line.separator"));
-
-			String kjD = needData[2];
-			int index_5 = kjD.indexOf("{");
-			int index_6 = kjD.lastIndexOf("}");
-			kjNum = JSON.parseObject(kjD.substring(index_5, index_6 + 1));
-
-			String myKj = needData[3];
-			int index_1 = myKj.indexOf("{");
-			int index_2 = myKj.lastIndexOf("}");
-			kjData = JSON.parseObject(myKj.substring(index_1, index_2 + 1));
-
-			String isNos = needData[4];
-			kjIssData = new TreeSet<String>();
-			int index_3 = isNos.indexOf("\"");
-			int index_4 = isNos.lastIndexOf("\"");
-			String isNos2 = isNos.substring(index_3 + 1, index_4);
-			for (String iss : isNos2.split(",")) {
-				kjIssData.add(iss);
-			}
-
-		}
-		return this;
+		return isParsed;
 	}
 
 	public Set<String> getLast_30_issue_no() throws Exception {
